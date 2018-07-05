@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+<script>
+    if (typeof module === 'object') {
+        window.module = module;
+        module = undefined;
+    }
+
+</script>
+<link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+<script src="semantic/dist/semantic.min.js"></script>
+<link rel="stylesheet" href="node_modules/highlight.js/styles/monokai.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+<script>
+    //hljs.initHighlightingOnLoad();
+
+</script>
+
+<script>
+    if (window.module) module = window.module;
+
+</script>
+
+<head>
+    <meta charset="UTF-8">
+    <title>My App</title>
+
+
+</head>
+
+<body>
+
+
+    <div class="ui padded equal height grid" id="context">
+
+        <div class="four wide column" id="left-panel">
+            <div class="ui rail">
+                <div class="ui left sticky">
+                    <p></p>
+                    <h3>Tags: </h3>
+                    <div class="ui inverted selection list">
+                        <a class="item" href="javascript:modal_pop()">
+                    <i class="folder icon"></i>
+                    <div class="content">
+                        <div class="header">site</div>
+                        <div class="description">Your site's theme</div>
+                    </div>
+                </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="twelve wide column" id="right-panel">
+            <div id="context">
+                <button class="ui primary button" onclick="modal_pop()" data-content="test">
+                Add element
+            </button>
+                <div id="tablediv">
+                    <table class="scroll" id="table-content">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Title</th>
+                                <th>Date</th>
+                                <th>Comments</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+
+
+                        </tbody>
+                        <!--<tfoot>
+                    <tr>
+                        <th colspan="3">
+                            <div class="ui right floated pagination menu">
+                                <a class="icon item">
+                                    <i class="left chevron icon"></i>
+                                </a>
+                                <a class="item">1</a>
+                                <a class="item">2</a>
+                                <a class="item">3</a>
+                                <a class="item">4</a>
+                                <a class="icon item">
+                                    <i class="right chevron icon"></i>
+                                </a>
+                            </div>
+                        </th>
+                    </tr>
+                </tfoot>-->
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="ui modal" id="add">
+        <i class="close icon"></i>
+        <div class="header">
+            Profile Picture
+        </div>
+        <div class="image content">
+            <div class="ui medium image">
+                <img src="/images/avatar/large/chris.jpg">
+            </div>
+            <div class="description">
+                <div class="ui header">We've auto-chosen a profile image for you.</div>
+                <p>We've grabbed the following image from the image associated with your registered e-mail address.</p>
+                <p>Is it okay to use this photo?</p>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui black deny button" data-content="test">
+                Nope
+            </div>
+            <div class="ui positive right labeled icon button">
+                Yep, that's me
+                <i class="checkmark icon"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui modal" id="content">
+        <div class="header">
+            <h2 id="title content">Mon code</h2>
+        </div>
+        <div class="scrolling content">
+            <h4>Code: </h4>
+            <pre><code class="python" id="code">
+            </code></pre>
+            <button id="btn" class="ui teal button" data-clipboard-target="#code" onclick="test()">
+ Copy to clipboard
+</button>
+
+            <h4>Comment: </h4>
+            <p id="comment">toto</p>
+        </div>
+        <div class="actions">
+            <div id="done" class="ui positive right labeled icon button">
+                Done
+                <i class="checkmark icon"></i>
+            </div>
+        </div>
+    </div>
+
+
+
+</body>
+
+</html>
+
+<style>
+    #tablediv {
+        height: 100%;
+    }
+
+    #left-panel {
+        background-color: #252526;
+
+    }
+
+    #right-panel {
+        background-color: #1e1e1e;
+    }
+
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        color: white;
+
+    }
+
+
+    .ui.grid {
+        min-height: 100%;
+    }
+
+
+    table,
+    td,
+    th {
+        border: 1px solid rgba(255, 255, 255, 0.85);
+
+
+    }
+
+    th,
+    td {
+
+        padding: 30px;
+    }
+
+
+
+    table {
+        padding: 15px;
+        border-collapse: collapse;
+        border-radius: 25px;
+    }
+
+
+    .table {
+        margin-top: 10px;
+    }
+
+    thead,
+    tbody {
+        display: block;
+    }
+
+    tbody {
+        /* Just for the demo          */
+        overflow-y: auto;
+        /* Trigger vertical scroll    */
+        overflow-x: hidden;
+        /* Hide the horizontal scroll */
+    }
+
+    td.name:hover {
+        background-color: white !important;
+        color: black !important;
+    }
+
+    /*.ui.table tfoot th {
+        border: 0.2px solid white;
+        background-color: #1e1e1e;
+        color: white;
+    }*/
+
+    .ui.menu .item {
+        border: 0.2px solid rgba(255, 255, 255, 0.85);
+        background-color: #252526;
+        color: white;
+    }
+
+    .ui.modal {
+        color: black;
+    }
+
+    body ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 5px;
+    }
+
+</style>
+
+<script>
+    function resize_table() {
+        var $table = $('table.scroll'),
+            $bodyCells = $table.find('tbody tr:first').children(),
+            colWidth;
+        console.log("allo");
+        // Get the tbody columns width array
+        colWidth = $bodyCells.map(function() {
+            return $(this).width();
+        }).get();
+
+        // Set the width of thead columns
+        $table.find('thead tr').children().each(function(i, v) {
+            $(v).width(colWidth[i]);
+        });
+
+        var b = $(window).height();
+        $('tbody').css("height", b - 200);
+    }
+    // Adjust the width of thead cells when window resizes
+    $(window).resize(resize_table).resize(); // Trigger resize handler
+
+    new ClipboardJS('#btn');
+
+    const electron = require("electron");
+    var knex = require("knex")({
+        client: "sqlite3",
+        connection: {
+            filename: "./database.sqlite"
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+
+
+
+        var tableRef = document.getElementById('table-content').getElementsByTagName('tbody')[0];
+
+
+
+
+        let result = knex.select("Title", "id", "DateTime", "Comment").from("Data");
+        result.then(function(rows) {
+            for (var i = 0; i < rows.length; i++) {
+                var newRow = tableRef.insertRow(tableRef.rows.length);
+                var Id = newRow.insertCell(0);
+                var Tittle = newRow.insertCell(1);
+                var Date = newRow.insertCell(2);
+                var Comment = newRow.insertCell(3);
+
+                var col1 = document.createTextNode(rows[i].id.toString())
+                var col2 = document.createTextNode(rows[i].Title.toString())
+                var col3 = document.createTextNode(rows[i].DateTime.toString())
+                var col4 = document.createTextNode(rows[i].Comment.toString())
+
+                Id.appendChild(col1);
+                Id.className = "name";
+                Id.setAttribute("onclick", 'modal_pop_2(\'' + rows[i].id.toString() + '\')')
+                Tittle.appendChild(col2);
+                Date.appendChild(col3);
+                Comment.appendChild(col4);
+            }
+
+            $('.ui.sticky')
+                .sticky({
+                    context: '#context'
+                });
+            resize_table()
+
+        });
+    })
+
+
+    function modal_pop() {
+        $('#add')
+            .modal('show');
+
+    };
+
+    function modal_pop_2(texte) {
+        console.log(texte);
+
+
+
+
+        $('#content')
+            .modal('setting', {
+                onShow: function() {
+                    let result = knex("Data").where('id', texte);
+                    result.then(function(rows) {
+                        var code = rows[0].Code.toString();
+                        var title = rows[0].Title.toString();
+                        var comment = rows[0].Comment.toString();
+                        document.getElementById("title content").innerHTML = title;
+                        document.getElementById("code").innerHTML = code;
+                        document.getElementById("comment").innerHTML = comment;
+
+                        $('pre code').each(function(i, block) {
+                            hljs.highlightBlock(block);
+                        });
+
+
+                    })
+
+                }
+            }).modal('show');
+
+
+    };
+
+    /*function test()
+    {
+        $('.teal.button')
+      .popup({
+        hoverable  : true,
+        position : 'right center'
+        
+      })
+    ;
+    };*/
+
+    function test() {
+        document.getElementById("btn").innerHTML = "Copied";
+
+    };
+
+    /*$('#content').modal({
+        onHide: function(){
+            console.log('hidden');
+
+        },
+        onShow: function(){
+            console.log('shown');
+        },
+        onApprove: function() {
+            console.log('Approve');
+            return validateModal()
+        }
+    });*/
+
+</script>

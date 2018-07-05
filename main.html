@@ -1,0 +1,52 @@
+<html>
+
+<head>
+    <title></title>
+    <script>
+        const electron = require("electron");
+        var knex = require("knex")({
+            client: "sqlite3",
+            connection: {
+                filename: "./database.sqlite"
+            }
+        });
+        /*const ipc = electron.ipcRenderer;
+        document.addEventListener("DOMContentLoaded", function(){
+            ipc.send("mainWindowLoaded")
+            ipc.on("resultSent", function(evt, result){
+                
+                console.log(result);
+                for(var i = 0; i < result.length;i++){
+                    resultEl.innerHTML += "First Name: " + result[i].FirstName.toString() + "<br/>";
+                }
+            });
+        });
+        	ipcMain.on("mainWindowLoaded", function () {
+		let result = knex.select("FirstName").from("User")
+		result.then(function(rows){
+			mainWindow.webContents.send("resultSent", rows);
+		})
+	});
+        
+        */
+
+        function myfonction() {
+            let resultEl = document.getElementById("result");
+            let result = knex.select("FirstName").from("User");
+            result.then(function(rows) {
+                for (var i = 0; i < rows.length; i++) {
+                    resultEl.innerHTML += "First Name: " + rows[i].FirstName.toString() + "<br/>";
+                }
+            })
+
+        }
+
+    </script>
+</head>
+
+<body>
+    <button onclick="myfonction()">test</button>
+    <p id="result"></p>
+</body>
+
+</html>
