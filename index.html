@@ -8,7 +8,8 @@
 
 </script>
 <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
-<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+    crossorigin="anonymous"></script>
 <script src="semantic/dist/semantic.min.js"></script>
 <link rel="stylesheet" href="node_modules/highlight.js/styles/monokai.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
@@ -36,45 +37,42 @@
     <div class="ui padded equal height grid" id="context">
 
         <div class="four wide column" id="left-panel">
-            <div class="ui rail">
-                <div class="ui left sticky">
-                    <p></p>
-                    <h3>Tags: </h3>
-                    <div class="ui inverted selection list">
-                        <a class="item" href="javascript:modal_pop()">
+
+            <p></p>
+            <h3>Tags: </h3>
+            <div class="ui inverted selection list">
+                <a class="item" href="javascript:modal_pop()">
                     <i class="folder icon"></i>
                     <div class="content">
                         <div class="header">site</div>
                         <div class="description">Your site's theme</div>
                     </div>
                 </a>
-                    </div>
-                </div>
             </div>
+
+
         </div>
 
 
         <div class="twelve wide column" id="right-panel">
-            <div id="context">
-                <button class="ui primary button" onclick="modal_pop()" data-content="test">
+
+            <button class="ui primary button" onclick="modal_pop()" data-content="test">
                 Add element
             </button>
-                <div id="tablediv">
-                    <table class="scroll" id="table-content">
-                        <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Title</th>
-                                <th>Date</th>
-                                <th>Comments</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+            <div id="tablediv">
+                <table class="scroll" id="table-content">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Title</th>
+                            <th>Date</th>
+                            <th>Comments</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-
-
-                        </tbody>
-                        <!--<tfoot>
+                    </tbody>
+                    <!--<tfoot>
                     <tr>
                         <th colspan="3">
                             <div class="ui right floated pagination menu">
@@ -92,9 +90,9 @@
                         </th>
                     </tr>
                 </tfoot>-->
-                    </table>
-                </div>
+                </table>
             </div>
+
         </div>
     </div>
 
@@ -102,27 +100,27 @@
     <div class="ui modal" id="add">
         <i class="close icon"></i>
         <div class="header">
-            Profile Picture
+            Add Element
         </div>
-        <div class="image content">
-            <div class="ui medium image">
-                <img src="/images/avatar/large/chris.jpg">
-            </div>
-            <div class="description">
-                <div class="ui header">We've auto-chosen a profile image for you.</div>
-                <p>We've grabbed the following image from the image associated with your registered e-mail address.</p>
-                <p>Is it okay to use this photo?</p>
-            </div>
+        <div class="content">
+
+            <form class="ui form" onsubmit="add_element()">
+                <div class="field">
+                    <label>Title</label>
+                    <input type="text" id="title-input" placeholder="">
+                </div>
+                <div class="field">
+                    <label>Code</label>
+                    <textarea id="code-input" onkeydown="if(event.keyCode===9){var v=this.value,s=this.selectionStart,e=this.selectionEnd;this.value=v.substring(0, s)+'\t'+v.substring(e);this.selectionStart=this.selectionEnd=s+1;return false;}"></textarea>
+                </div>
+                <div class="field">
+                    <label>Comment</label>
+                    <textarea id="comment-input"></textarea>
+                </div>
+                <button class="ui button" id="SubmitForm">Submit</button>
+            </form>
         </div>
-        <div class="actions">
-            <div class="ui black deny button" data-content="test">
-                Nope
-            </div>
-            <div class="ui positive right labeled icon button">
-                Yep, that's me
-                <i class="checkmark icon"></i>
-            </div>
-        </div>
+        
     </div>
 
     <div class="ui modal" id="content">
@@ -134,8 +132,8 @@
             <pre><code class="python" id="code">
             </code></pre>
             <button id="btn" class="ui teal button" data-clipboard-target="#code" onclick="test()">
- Copy to clipboard
-</button>
+                Copy to clipboard
+            </button>
 
             <h4>Comment: </h4>
             <p id="comment">toto</p>
@@ -155,9 +153,7 @@
 </html>
 
 <style>
-    #tablediv {
-        height: 100%;
-    }
+    /* GRID AND BODY*/
 
     #left-panel {
         background-color: #252526;
@@ -182,32 +178,29 @@
     }
 
 
+    /* TABLE CSS */
+
+
     table,
     td,
     th {
-        border: 1px solid rgba(255, 255, 255, 0.85);
-
+        height: 100%;
+        margin-top: 20px;
 
     }
 
     th,
     td {
-
+        border: 1px solid rgba(255, 255, 255, 0.85);
         padding: 30px;
     }
 
 
 
     table {
-        padding: 15px;
         border-collapse: collapse;
-        border-radius: 25px;
     }
 
-
-    .table {
-        margin-top: 10px;
-    }
 
     thead,
     tbody {
@@ -233,6 +226,8 @@
         color: white;
     }*/
 
+    /*   */
+
     .ui.menu .item {
         border: 0.2px solid rgba(255, 255, 255, 0.85);
         background-color: #252526;
@@ -243,11 +238,17 @@
         color: black;
     }
 
+    /* SCROLLBAR */
+
     body ::-webkit-scrollbar-thumb {
         background: rgba(255, 255, 255, 0.85);
         border-radius: 5px;
     }
 
+    button#SubmitForm{
+        float: right;
+        margin-bottom: 10px;
+    }
 </style>
 
 <script>
@@ -257,12 +258,12 @@
             colWidth;
         console.log("allo");
         // Get the tbody columns width array
-        colWidth = $bodyCells.map(function() {
+        colWidth = $bodyCells.map(function () {
             return $(this).width();
         }).get();
 
         // Set the width of thead columns
-        $table.find('thead tr').children().each(function(i, v) {
+        $table.find('thead tr').children().each(function (i, v) {
             $(v).width(colWidth[i]);
         });
 
@@ -279,10 +280,11 @@
         client: "sqlite3",
         connection: {
             filename: "./database.sqlite"
-        }
+        },
+        useNullAsDefault: true
     });
 
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
 
 
 
@@ -292,7 +294,7 @@
 
 
         let result = knex.select("Title", "id", "DateTime", "Comment").from("Data");
-        result.then(function(rows) {
+        result.then(function (rows) {
             for (var i = 0; i < rows.length; i++) {
                 var newRow = tableRef.insertRow(tableRef.rows.length);
                 var Id = newRow.insertCell(0);
@@ -313,10 +315,6 @@
                 Comment.appendChild(col4);
             }
 
-            $('.ui.sticky')
-                .sticky({
-                    context: '#context'
-                });
             resize_table()
 
         });
@@ -332,14 +330,11 @@
     function modal_pop_2(texte) {
         console.log(texte);
 
-
-
-
         $('#content')
             .modal('setting', {
-                onShow: function() {
+                onShow: function () {
                     let result = knex("Data").where('id', texte);
-                    result.then(function(rows) {
+                    result.then(function (rows) {
                         var code = rows[0].Code.toString();
                         var title = rows[0].Title.toString();
                         var comment = rows[0].Comment.toString();
@@ -347,7 +342,7 @@
                         document.getElementById("code").innerHTML = code;
                         document.getElementById("comment").innerHTML = comment;
 
-                        $('pre code').each(function(i, block) {
+                        $('pre code').each(function (i, block) {
                             hljs.highlightBlock(block);
                         });
 
@@ -389,5 +384,22 @@
             return validateModal()
         }
     });*/
+
+    function add_element(){
+        var title = document.getElementById("title-input").value;
+        var code = document.getElementById("code-input").value;
+        var comment = document.getElementById("comment-input").value;
+        var date = new Date();
+        var datetime = date.toISOString();
+
+        knex.insert({Code: code,
+                    Title: title,
+                    Comment: comment,
+                    DateTime: datetime
+        
+        }).into(('Data')).then( function (result) {
+          res.json({ success: true, message: 'ok' });     // respond back to request
+       })
+    }
 
 </script>
