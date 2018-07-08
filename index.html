@@ -41,7 +41,12 @@
             <p></p>
             <h3>Tags: </h3>
             <div id="tag_list" class="ui inverted selection list">
-                
+                <a class="item" onclick="filter('all')" id="all">
+                    <i class="tag icon"></i>
+                    <div class="content">
+                        <div class="header">All</div>
+                    </div>
+                </a>
             </div>
 
 
@@ -63,7 +68,7 @@
                             <th>Comments</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tablebody">
 
                     </tbody>
                     <!--<tfoot>
@@ -115,7 +120,8 @@
                     <label>Comment</label>
                     <textarea required id="comment-input" rows="2"></textarea>
                 </div>
-                <button class="ui button" id="SubmitForm">Submit</button>
+                
+                <button type="button" class="ui button" id="SubmitForm" onclick="add_element()">Submit</button>
             </form>
         </div>
 
@@ -156,7 +162,14 @@
 
     #left-panel {
         background-color: #252526;
+        
+    }
 
+    #tag_list{
+        height: 400px;
+        width: 100%;
+        overflow-y: auto;
+        overflow-x:auto;
     }
 
     #right-panel {
@@ -244,8 +257,13 @@
 
     /* SCROLLBAR */
 
-    body ::-webkit-scrollbar-thumb {
+    #right-panel ::-webkit-scrollbar-thumb {
         background: rgba(255, 255, 255, 0.85);
+        border-radius: 5px;
+    }
+
+    #left-panel ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.5);
         border-radius: 5px;
     }
 
@@ -267,7 +285,7 @@
         useNullAsDefault: true
     });
 
-    function resize_table() {
+    function resize_table(len) {
        for (var i = 0; i<2; i++){
             var $table = $('table.scroll'),
                 $bodyCells = $table.find('tbody tr:first').children(),
@@ -284,6 +302,11 @@
 
             var b = $(window).height();
             $('tbody').css("height", b - 200);
+
+            document.getElementById("tag_list").style.height = (b-100).toString().concat("px");
+            console.log((b-200).toString().concat("px"));
+            console.log(document.getElementById("tag_list").offsetHeight);
+            
        }
     }
     // Adjust the width of thead cells when window resizes
@@ -337,8 +360,7 @@
     var last_id = 0;
 
     function modal_pop() {
-        $('#add')
-            .modal('show');
+        $('#add').modal('show');
 
         let result = knex.select("id").orderBy('id', 'desc').from("Data").limit(1);
         result.then(function (rows) {
@@ -461,6 +483,8 @@
         })
         .then(function () {
             console.log('Transaction complete.');
+            $('#add').modal('hide');
+            location.reload();
         })
         .catch(function () {
             console.log('Error');
@@ -489,6 +513,7 @@
                 var link = document.createElement('a');
                 link.className = "item";
                 link.setAttribute("onclick", 'filter(\'' + rows[i].Tag.toString() + '\')')
+                link.setAttribute("id", rows[i].Tag.toString())
 
                 var icon = document.createElement('i');
                 icon.className = "tag icon";
@@ -508,5 +533,71 @@
             }
         });
     }
+
+    var last_tag = "";
+    function filter(tag){
+        
+        
+
+        var tablebody = document.getElementById("tablebody");
+
+        while (tablebody.firstChild) {
+            tablebody.removeChild(tablebody.firstChild);
+        }
+
+        if(last_tag != ""){
+            document.getElementById(last_tag).style.backgroundColor = "rgba(255, 255, 255, 0)";
+        }
+        
+
+        var tableRef = document.getElementById('table-content').getElementsByTagName('tbody')[0];
+
+        /*knex('users')
+        .join('contacts', 'users.id', '=', 'contacts.user_id')
+.       select('users.id', 'contacts.phone')*/
+       
+        if(tag==='all')
+        {
+            var result = knex.select("Title", "id", "DateTime", "Comment").from("Data");
+        }
+        else{
+            var result = knex("Data")
+                        .join('Tags', 'Data.id', '=', 'Tags.idData')
+                        .select("Data.Title", "Data.id", "Data.DateTime", "Data.Comment")
+                        .where('Tag', tag);
+        }
+        result.then(function (rows) {
+        for (var i = 0; i < rows.length; i++) {
+            var newRow = tableRef.insertRow(tableRef.rows.length);
+            var Id = newRow.insertCell(0);
+            var Tittle = newRow.insertCell(1);
+            var Date = newRow.insertCell(2);
+            var Comment = newRow.insertCell(3);
+
+            var col1 = document.createTextNode(rows[i].id.toString())
+            var col2 = document.createTextNode(rows[i].Title.toString())
+            var col3 = document.createTextNode(rows[i].DateTime.toString())
+            var col4 = document.createTextNode(rows[i].Comment.toString())
+
+            Id.appendChild(col1);
+            Id.className = "name";
+            Id.setAttribute("onclick", 'modal_pop_2(\'' + rows[i].id.toString() + '\')')
+            Tittle.appendChild(col2);
+            Date.appendChild(col3);
+            Comment.appendChild(col4);
+        }      
+        resize_table(rows.length)
+
+
+
+        document.getElementById(tag).style.backgroundColor = "rgba(255, 255, 255, 0.30)";
+        last_tag = tag;
+
+
+    });
+    }
+
+    
+
 
 </script>

@@ -73,5 +73,5 @@ typings/
 .serverless
 
 #database ignore
-*.sqlite
-*.db
+#*.sqlite
+#*.db
