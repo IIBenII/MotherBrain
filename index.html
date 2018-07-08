@@ -40,14 +40,8 @@
 
             <p></p>
             <h3>Tags: </h3>
-            <div class="ui inverted selection list">
-                <a class="item" href="javascript:modal_pop()">
-                    <i class="folder icon"></i>
-                    <div class="content">
-                        <div class="header">site</div>
-                        <div class="description">Your site's theme</div>
-                    </div>
-                </a>
+            <div id="tag_list" class="ui inverted selection list">
+                
             </div>
 
 
@@ -107,20 +101,24 @@
             <form class="ui form" onsubmit="add_element()">
                 <div class="field">
                     <label>Title</label>
-                    <input type="text" id="title-input" placeholder="">
+                    <input required type="text" id="title-input" placeholder="">
                 </div>
                 <div class="field">
                     <label>Code</label>
-                    <textarea id="code-input" onkeydown="if(event.keyCode===9){var v=this.value,s=this.selectionStart,e=this.selectionEnd;this.value=v.substring(0, s)+'\t'+v.substring(e);this.selectionStart=this.selectionEnd=s+1;return false;}"></textarea>
+                    <textarea required rows="4" id="code-input" onkeydown="if(event.keyCode===9){var v=this.value,s=this.selectionStart,e=this.selectionEnd;this.value=v.substring(0, s)+'\t'+v.substring(e);this.selectionStart=this.selectionEnd=s+1;return false;}"></textarea>
+                </div>
+                <div class="field">
+                        <label>Tags</label>
+                <select name="tags" id="tagdrop" multiple="" class="ui search fluid dropdown"></select>
                 </div>
                 <div class="field">
                     <label>Comment</label>
-                    <textarea id="comment-input"></textarea>
+                    <textarea required id="comment-input" rows="2"></textarea>
                 </div>
                 <button class="ui button" id="SubmitForm">Submit</button>
             </form>
         </div>
-        
+
     </div>
 
     <div class="ui modal" id="content">
@@ -131,12 +129,14 @@
             <h4>Code: </h4>
             <pre><code class="python" id="code">
             </code></pre>
-            <button id="btn" class="ui teal button" data-clipboard-target="#code" onclick="test()">
+            <button id="btn" class="ui primary button" data-clipboard-target="#code" onclick="test()">
                 Copy to clipboard
             </button>
 
             <h4>Comment: </h4>
             <p id="comment">toto</p>
+            <h4>Tags :</h4>
+            <div id="tagdiv"></div>
         </div>
         <div class="actions">
             <div id="done" class="ui positive right labeled icon button">
@@ -145,7 +145,6 @@
             </div>
         </div>
     </div>
-
 
 
 </body>
@@ -185,8 +184,8 @@
     td,
     th {
         height: 100%;
+        width: 100%;
         margin-top: 20px;
-
     }
 
     th,
@@ -211,8 +210,13 @@
         /* Just for the demo          */
         overflow-y: auto;
         /* Trigger vertical scroll    */
-        overflow-x: hidden;
+        overflow-x:auto;
         /* Hide the horizontal scroll */
+        padding-right: 15px;
+    }
+
+    td.name{
+        width: 50px;
     }
 
     td.name:hover {
@@ -252,27 +256,6 @@
 </style>
 
 <script>
-    function resize_table() {
-        var $table = $('table.scroll'),
-            $bodyCells = $table.find('tbody tr:first').children(),
-            colWidth;
-        console.log("allo");
-        // Get the tbody columns width array
-        colWidth = $bodyCells.map(function () {
-            return $(this).width();
-        }).get();
-
-        // Set the width of thead columns
-        $table.find('thead tr').children().each(function (i, v) {
-            $(v).width(colWidth[i]);
-        });
-
-        var b = $(window).height();
-        $('tbody').css("height", b - 200);
-    }
-    // Adjust the width of thead cells when window resizes
-    $(window).resize(resize_table).resize(); // Trigger resize handler
-
     new ClipboardJS('#btn');
 
     const electron = require("electron");
@@ -284,14 +267,43 @@
         useNullAsDefault: true
     });
 
+    function resize_table() {
+       for (var i = 0; i<2; i++){
+            var $table = $('table.scroll'),
+                $bodyCells = $table.find('tbody tr:first').children(),
+                colWidth;
+            // Get the tbody columns width array
+            colWidth = $bodyCells.map(function () {
+                return $(this).width();
+            }).get();
+
+            // Set the width of thead columns
+            $table.find('thead tr').children().each(function (i, v) {
+                $(v).width(colWidth[i]);
+            });
+
+            var b = $(window).height();
+            $('tbody').css("height", b - 200);
+       }
+    }
+    // Adjust the width of thead cells when window resizes
+    $(window).resize(resize_table).resize(); // Trigger resize handler
+
+
     document.addEventListener("DOMContentLoaded", function () {
 
+        $('.ui.dropdown').dropdown({
+            allowAdditions: true,
+        });
 
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+            event.preventDefault();
+            return false;
+            }
+        });
 
         var tableRef = document.getElementById('table-content').getElementsByTagName('tbody')[0];
-
-
-
 
         let result = knex.select("Title", "id", "DateTime", "Comment").from("Data");
         result.then(function (rows) {
@@ -318,17 +330,39 @@
             resize_table()
 
         });
+
+        list_tag();
     })
 
+    var last_id = 0;
 
     function modal_pop() {
         $('#add')
             .modal('show');
 
+        let result = knex.select("id").orderBy('id', 'desc').from("Data").limit(1);
+        result.then(function (rows) {
+            last_id = parseInt(rows[0].id.toString());
+        })
+
+
+        var select = document.getElementById("tagdrop");
+        var options = [];
+        var option = document.createElement('option');
+
+        let result_tag = knex('Tags').distinct('Tag').select();
+        result_tag.then(function (rows) {
+            for (var i = 0; i < rows.length; i++) {
+                option.text = option.value = rows[i].Tag.toString();
+                options.push(option.outerHTML);
+            }
+            select.insertAdjacentHTML('beforeEnd', options.join('\n'));
+        })
+
+        
     };
 
     function modal_pop_2(texte) {
-        console.log(texte);
 
         $('#content')
             .modal('setting', {
@@ -345,26 +379,32 @@
                         $('pre code').each(function (i, block) {
                             hljs.highlightBlock(block);
                         });
-
-
                     })
 
+                    let resulttag = knex("Tags").where('idData', texte);
+                    resulttag.then(function (rows) {
+
+                        var divtag = document.getElementById("tagdiv");
+
+                        while (divtag.firstChild) {
+                            divtag.removeChild(divtag.firstChild);
+                        }
+                        
+                        for (var i = 0; i < rows.length; i++) {
+                            var taglabel = document.createElement('a')
+                            taglabel.className = "ui tag label";
+                            taglabel.text  = rows[i].Tag.toString();
+                            divtag.appendChild(taglabel)
+                                             
+                        }
+                        
+
+                    })
                 }
             }).modal('show');
 
 
     };
-
-    /*function test()
-    {
-        $('.teal.button')
-      .popup({
-        hoverable  : true,
-        position : 'right center'
-        
-      })
-    ;
-    };*/
 
     function test() {
         document.getElementById("btn").innerHTML = "Copied";
@@ -386,20 +426,87 @@
     });*/
 
     function add_element(){
+        
         var title = document.getElementById("title-input").value;
         var code = document.getElementById("code-input").value;
         var comment = document.getElementById("comment-input").value;
         var date = new Date();
         var datetime = date.toISOString();
 
-        knex.insert({Code: code,
+        
+        var dropdown_values = $(".ui.dropdown").dropdown("get value");
+        var temp = last_id+1
+        var popul = [];
+        for (var i = 0; i < dropdown_values.length; i++) {
+
+            popul.push({idData : temp, Tag: dropdown_values[i].toString()})
+            
+        }
+       
+       return knex.transaction(function (t) {
+        return knex("Data")
+                .transacting(t)
+                .insert({Code: code,
                     Title: title,
                     Comment: comment,
-                    DateTime: datetime
+                    DateTime: datetime       
+                    })
+            .then(function (response) {
+                return knex('Tags')
+                .transacting(t)
+                .insert(popul)
+            })
+            .then(t.commit)
+            .catch(t.rollback)
+        })
+        .then(function () {
+            console.log('Transaction complete.');
+        })
+        .catch(function () {
+            console.log('Error');
+        });
+    }
+
+    function list_tag(){
+
+        /*<div class="ui inverted selection list">
+                <a class="item" href="javascript:modal_pop()">
+                    <i class="folder icon"></i>
+                    <div class="content">
+                        <div class="header">site</div>
+                    </div>
+                </a>
+            </div>*/
+
+        var divtag = document.getElementById("tag_list");
+
+
+        let result =  knex('Tags').distinct('Tag').select();
         
-        }).into(('Data')).then( function (result) {
-          res.json({ success: true, message: 'ok' });     // respond back to request
-       })
+        result.then(function (rows) {
+            
+            for (var i = 0; i<rows.length; i++) {
+                var link = document.createElement('a');
+                link.className = "item";
+                link.setAttribute("onclick", 'filter(\'' + rows[i].Tag.toString() + '\')')
+
+                var icon = document.createElement('i');
+                icon.className = "tag icon";
+                link.appendChild(icon);
+
+                var content = document.createElement('div');
+                content.className = "content";
+
+                var header = document.createElement('div');
+                header.className = "header";
+                header.textContent = rows[i].Tag.toString();
+                content.appendChild(header);
+                link.appendChild(content);
+
+                divtag.appendChild(link)
+                                
+            }
+        });
     }
 
 </script>
