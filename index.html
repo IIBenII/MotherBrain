@@ -26,7 +26,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>My App</title>
+    <title>Mother Brain</title>
 
 
 </head>
@@ -145,6 +145,10 @@
             <div id="tagdiv"></div>
         </div>
         <div class="actions">
+                <div id="delete" class="ui negative right labeled icon button" onclick="delete_item()">
+                        delete
+                        <i class="trash icon"></i>
+                    </div>
             <div id="done" class="ui positive right labeled icon button">
                 Done
                 <i class="checkmark icon"></i>
@@ -312,20 +316,14 @@
     // Adjust the width of thead cells when window resizes
     $(window).resize(resize_table).resize(); // Trigger resize handler
 
-
+    
     document.addEventListener("DOMContentLoaded", function () {
 
         $('.ui.dropdown').dropdown({
             allowAdditions: true,
         });
 
-        $(window).keydown(function(event){
-            if(event.keyCode == 13) {
-            event.preventDefault();
-            return false;
-            }
-        });
-
+        
         var tableRef = document.getElementById('table-content').getElementsByTagName('tbody')[0];
 
         let result = knex.select("Title", "id", "DateTime", "Comment").from("Data");
@@ -384,8 +382,10 @@
         
     };
 
+    
+    var last_item = "";
     function modal_pop_2(texte) {
-
+        last_item = texte;
         $('#content')
             .modal('setting', {
                 onShow: function () {
@@ -427,6 +427,33 @@
 
 
     };
+
+    function delete_item(){
+
+        console.log(last_item);
+        return knex.transaction(function (t) {
+        return knex("Data")
+                .transacting(t)
+                .where("id", last_item)
+                .del()
+            .then(function (response) {
+                return knex('Tags')
+                .transacting(t)
+                .where("idData", last_item)
+                .del()
+            })
+            .then(t.commit)
+            .catch(t.rollback)
+        })
+        .then(function () {
+            console.log('Delete complete.');
+            $('#content').modal('hide');
+            location.reload();
+        })
+        .catch(function () {
+            console.log('Error');
+        });
+    }
 
     function test() {
         document.getElementById("btn").innerHTML = "Copied";

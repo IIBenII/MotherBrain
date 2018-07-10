@@ -10,6 +10,15 @@ const {
         filename: "./database.sqlite"
     }
 });*/
+const sqlite3 = require('sqlite3').verbose();
+let db = new sqlite3.Database('./database.sqlite', (err) => {
+    
+    db.run("CREATE TABLE if not exists Data (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, DateTime TEXT, Title TEXT, Code BLOB, Comment TEXT )");
+    db.run("CREATE TABLE if not exists Tags (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, idData TEXT, Tag TEXT )");
+    
+  });
+
+db.close();
 
 app.on("ready", () => {
     let mainWindow = new BrowserWindow({
