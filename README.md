@@ -18,7 +18,7 @@ You can download a build version in build folder.
 
     git clone https://github.com/IIBenII/MotherBrain.git
     npm install
-    npm run
+    npm start
 
 If you have trouble with windows launch in command prompt as administrator:
 
